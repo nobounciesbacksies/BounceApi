@@ -59,10 +59,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
