@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { FirestoreService } from 'src/services/firestore.service';
 
 @Injectable()
 export class BlacklistService {
+  constructor(firestoreService: FirestoreService) {}
+
   async returnBlacklist(): Promise<string> {
     return 'return entire blacklist here';
   }
