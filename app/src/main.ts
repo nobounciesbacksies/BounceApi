@@ -18,7 +18,6 @@ async function bootstrap() {
     },
   );
 
-
   const swaggerOptions = new DocumentBuilder()
     .setTitle('No Bounce Api')
     .setDescription('Swagger documentation for REST based No Bounce API.')

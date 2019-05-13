@@ -12,9 +12,7 @@ export class HealthcheckController {
    * The constructor with injections.
    * @param healthcheckService
    */
-  constructor(
-    private readonly healthcheckService: HealthcheckService,
-  ) {}
+  constructor(private readonly healthcheckService: HealthcheckService) {}
 
   /**
    * Root healthcheck call

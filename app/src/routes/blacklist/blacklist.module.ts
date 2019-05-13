@@ -3,7 +3,7 @@ import { BlacklistController } from './blacklist.controller';
 import { BlacklistService } from './blacklist.service';
 
 @Module({
-    controllers: [BlacklistController],
-    providers: [BlacklistService],
-  })
-  export class BlacklistModule {}
+  controllers: [BlacklistController],
+  providers: [BlacklistService],
+})
+export class BlacklistModule {}
