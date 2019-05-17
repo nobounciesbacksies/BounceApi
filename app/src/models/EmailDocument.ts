@@ -7,7 +7,6 @@ export enum EmailAddedFrom {
 }
 
 export interface EmailDocument {
-    docID: string,
     email: string,
     createdAt: Date,
     createdBy: string,

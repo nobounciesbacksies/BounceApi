@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FirestoreService } from 'src/services/firestore.service';
-import { EmailDocument } from '../../models/EmailDocument';
+import { EmailDocument, EmailAddedFrom } from '../../models/EmailDocument';
 
 @Injectable()
 export class BlacklistService {
@@ -17,12 +17,12 @@ export class BlacklistService {
       .collection('emails');
     const allEmails: Array<EmailDocument> = await emailCollectionRef.get();
 
-    return allEmails.map(currentElement => {
-      return currentElement.email;
+    return allEmails.map(currentEmailDoc => {
+      return currentEmailDoc.email;
     });
   }
 
-  async sendEmailsBack(emails: Array<string>, blacklistID: string): Promise<any> {
+  async sendEmailsBack(emailsArray: Array<string>, blacklistID: string): Promise<any> {
     const emailCollectionRef = await this.firestoreClient
       .collection('blacklist')
       .doc(blacklistID)
@@ -31,13 +31,13 @@ export class BlacklistService {
     const whitelist: Array<string> = [];
     const blacklist: Array<string> = [];
 
-    emails.forEach(element => {
-      if (allEmails.some(val => {
-        return element === val.email;
+    emailsArray.forEach(email => {
+      if (allEmails.some(emailDoc => {
+        return email === emailDoc.email;
       })) {
-        blacklist.push(element);
+        blacklist.push(email);
       } else {
-        whitelist.push(element);
+        whitelist.push(email);
       }
     });
 
@@ -47,18 +47,21 @@ export class BlacklistService {
     };
   }
 
-  async removeEmails(emails: Array<string>, blacklistID: string): Promise<any> {
+  async removeEmails(emailsArray: Array<string>, blacklistID: string): Promise<any> {
     const deletedEmails: Array<string> = [];
     const didNotExist: Array<string> = [];
+    const emailCollectionRef = this.firestoreClient
+      .collection('blacklist')
+      .doc(blacklistID)
+      .collection('emails');
 
-    emails.forEach(async element => {
-      //check if it exists
-      if (true) {
-        // get the email docx ID
-        await this.firestoreClient.collection('blacklist').doc(blacklistID).collection('emails').doc('email').delete();
-        deletedEmails.push(element)
+    emailsArray.forEach(async email => {
+      const emailDoc = emailCollectionRef.doc(email).get();
+      if (emailDoc.exists) {
+        await emailCollectionRef.doc(email).delete();
+        deletedEmails.push(email);
       } else {
-        didNotExist.push(element)
+        didNotExist.push(email);
       }
     });
     return {
@@ -67,12 +70,34 @@ export class BlacklistService {
     };
   }
 
-  async addEmails(): Promise<string> {
-    const emailCollectionRef = this.firestoreClient.collection('blacklist').doc('blacklistID').collection('emails');
-    // for loop to add each one, it will overwrite if it already exists, check for already exists first?
-    // using .set() to add it. Also the firestore timestamp thing might be good, not sure what else is available
-    // check if it already exists before using set
-    return 'add emails here';
+  async addEmails(emailsArray: Array<string>, blacklistID: string): Promise<any> {
+    const emailCollectionRef = this.firestoreClient
+      .collection('blacklist')
+      .doc(blacklistID)
+      .collection('emails');
+    const addedEmails: Array<string> = [];
+    const existedEmails: Array<string> = [];
+
+    emailsArray.forEach(async email => {
+      const emailDoc = emailCollectionRef.doc(email).get();
+      if (emailDoc.exists) {
+        existedEmails.push(email);
+      } else {
+        const newEmail: EmailDocument = {
+          email: email,
+          addedFrom: EmailAddedFrom.userApi,
+          createdAt: new Date(),
+          createdBy: 'userID',
+          unsubscribed: false
+        }
+        await emailCollectionRef.doc(email).set(newEmail);
+        addedEmails.push(email);
+      }
+    });
+    return {
+      addedEmails,
+      existedEmails
+    };
   }
 }
 

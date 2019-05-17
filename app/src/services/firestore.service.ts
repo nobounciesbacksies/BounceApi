@@ -7,10 +7,6 @@ export class FirestoreService {
 
     constructor() {
         this.firestoreClient = new Firestore();
-        const emailCollectionRef = this.firestoreClient.collection('blacklist').doc('blah').collection('emails');
-
-        
-        emailCollectionRef.whe
     }
 
     public getClient() {
