@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import * as FirestoreClient from '@google-cloud/firestore';
+import { Firestore } from '@google-cloud/firestore';
 
 @Injectable()
 export class FirestoreService {
-    firestoreClient;
+    firestoreClient: Firestore;
 
     constructor() {
-        this.firestoreClient = FirestoreClient;
+        this.firestoreClient = new Firestore();
     }
 
     public getClient() {
