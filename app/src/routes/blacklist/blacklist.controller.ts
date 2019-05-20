@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body } from '@nestjs/common';
 import { BlacklistService } from './blacklist.service';
 
 //placeholders for the blacklist routes
@@ -8,12 +8,12 @@ export class BlacklistController {
 
   @Get()
   async returnBlacklist(): Promise<string> {
-    return this.blacklistService.returnBlacklist();
+    return this.blacklistService.returnBlacklist('blacklistID');
   }
 
   @Post()
-  async sendEmailsBack(): Promise<string> {
-    return this.blacklistService.sendEmailsBack();
+  async sendEmailsBack(@Body('emails') emails: Array<string>): Promise<string> {
+    return this.blacklistService.sendEmailsBack(emails, 'blacklistID');
   }
 
   @Delete()
