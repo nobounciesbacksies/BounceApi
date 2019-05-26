@@ -18,11 +18,11 @@ export class BlacklistController {
 
   @Delete()
   async removeEmails(): Promise<string> {
-    return this.blacklistService.removeEmails();
+    return this.blacklistService.removeEmails([], 'blacklistId');
   }
 
   @Post('/add')
   async addEmails(): Promise<string> {
-    return this.blacklistService.addEmails();
+    return this.blacklistService.addEmails([], 'blacklistId');
   }
 }

@@ -22,10 +22,10 @@ async function bootstrap() {
     .setTitle('No Bounce Api')
     .setDescription('Swagger documentation for REST based No Bounce API.')
     .setVersion('1.0.0')
-    .addTag('Blacklist', '')
-    .addTag('Webhook', '')
+    .addTag('Blacklist', 'The blacklist endpoints for handling a client\'s Blacklist')
+    .addTag('Webhook', 'The webhook endpoints for handling webhook calls.')
     .addBearerAuth('Authorization', 'header')
-    .setSchemes('http')
+    .setSchemes(AppModule.httpsOn)
     .setContactEmail('api-support@healthemail.com')
     .setBasePath('/v1')
     .build();
@@ -43,6 +43,6 @@ async function bootstrap() {
 
   app.setGlobalPrefix('v1');
 
-  await app.listen(8080, '0.0.0.0');
+  await app.listen(AppModule.port, AppModule.host);
 }
 bootstrap();
