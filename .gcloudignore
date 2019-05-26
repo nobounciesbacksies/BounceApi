@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+#builds
+dist/
+gcp.json
+*.env
+*.key
+
+# IDE
+/.idea
+/.awcache
+/.vscode
+
+# bundle
+packages/**/*.d.ts
+packages/**/*.js
+
+# misc
+.DS_Store
+npm-debug.log
+yarn-error.log
+/**/npm-debug.log
+/packages/**/.npmignore
+/packages/**/LICENSE
