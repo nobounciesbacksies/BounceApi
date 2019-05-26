@@ -22,7 +22,10 @@ async function bootstrap() {
     .setTitle('No Bounce Api')
     .setDescription('Swagger documentation for REST based No Bounce API.')
     .setVersion('1.0.0')
-    .addTag('Blacklist', 'The blacklist endpoints for handling a client\'s Blacklist')
+    .addTag(
+      'Blacklist',
+      "The blacklist endpoints for handling a client's Blacklist",
+    )
     .addTag('Webhook', 'The webhook endpoints for handling webhook calls.')
     .addBearerAuth('Authorization', 'header')
     .setSchemes(AppModule.httpsOn)

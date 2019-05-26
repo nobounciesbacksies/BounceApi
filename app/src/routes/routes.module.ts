@@ -8,9 +8,10 @@ import { ResponseTimeMiddleware } from '@nest-middlewares/response-time';
 import { BlacklistController } from './blacklist/blacklist.controller';
 import { WebhooksController } from './webhook/webhooks.controller';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [BlacklistModule, WebhooksModule, HealthcheckModule],
+  imports: [BlacklistModule, WebhooksModule, HealthcheckModule, AuthModule],
 })
 export class RoutesModule {
   /**

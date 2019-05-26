@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import * as path from 'path';
 import { RoutesModule } from './routes/routes.module';
 
-
 @Module({
   imports: [
     RoutesModule,
@@ -11,12 +10,11 @@ import { RoutesModule } from './routes/routes.module';
   ],
 })
 export class AppModule {
-
   /** The host to run the application on */
   static host: string;
 
   /** Tell whether to serve with https or not for swagger */
-  static httpsOn: ('http' | 'https');
+  static httpsOn: 'http' | 'https';
 
   /** App port to run application */
   static port: number;
