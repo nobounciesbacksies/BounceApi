@@ -1,5 +1,5 @@
 #Part 1
-FROM node:12.2.0-alpine
+FROM node:12.3.1-alpine
 
 RUN apk upgrade --no-cache --update && \
     apk add --no-cache curl
@@ -12,8 +12,10 @@ COPY . .
 
 #Run local build
 RUN npm prune && \
-    npm install --prod && \
+    npm install && \
     npm run prestart:prod && \
+    rm -rf node_modules && \
+    npm install --prod && \
     rm -rf test src .prettierrc Dockerfile nest-cli.json nodemon-debug.json nodemon.json package-lock.json package.json tsconfig.build.json tsconfig.json tslint.json
 
 # Set To non root user
