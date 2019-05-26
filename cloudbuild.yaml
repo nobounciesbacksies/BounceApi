@@ -8,6 +8,15 @@ steps:
   - --location=global
   - --keyring=bounce-api-keyring
   - --key=build-key
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=app/keys/bounceapi.key.encrypted
+  - --plaintext-file=app/keys/bounceapi.key
+  - --location=global
+  - --keyring=bounce-api-keyring
+  - --key=build-key
 - name: gcr.io/cloud-builders/docker
   args: ['build', '-t', 'gcr.io/healthemail-239705/no-bounce-api:${COMMIT_SHA}', 'app']
 - name: 'gcr.io/cloud-builders/docker'

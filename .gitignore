@@ -5,6 +5,7 @@ node_modules/
 dist/
 gcp.json
 *.env
+*.key
 
 # IDE
 /.idea
