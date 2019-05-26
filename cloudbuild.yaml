@@ -1,0 +1,17 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=app/gcp.json.encrypted
+  - --plaintext-file=app/gcp.json
+  - --location=global
+  - --keyring=bounce-api-keyring
+  - --key=build-key
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'gcr.io/healthemail-239705/no-bounce-api:${COMMIT_SHA}', 'app']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/healthemail-239705/no-bounce-api"]
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'run', 'deploy', 'no-bounce-api', '--image', 'gcr.io/healthemail-239705/no-bounce-api:${COMMIT_SHA}', '--region', 'us-central1']
+  env: ['APP_HOST=0.0.0.0', 'NODE_ENV=production', 'GOOGLE_APPLICATION_CREDENTIALS=/home/node/app/gcp.json']

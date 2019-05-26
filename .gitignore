@@ -3,6 +3,8 @@ node_modules/
 
 #builds
 dist/
+gcp.json
+*.env
 
 # IDE
 /.idea
@@ -21,11 +23,6 @@ yarn-error.log
 /**/npm-debug.log
 /packages/**/.npmignore
 /packages/**/LICENSE
-
-# example
-/quick-start
-/example_dist
-/example
 
 # tests
 /test
