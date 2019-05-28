@@ -1,7 +1,8 @@
-import { Get, Controller, Head, HttpCode } from '@nestjs/common/decorators';
+import { Get, Controller, Head, HttpCode, UseGuards } from '@nestjs/common/decorators';
 import { HealthcheckService } from './healthcheck.service';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * The controller that handles healthcheck functionality.

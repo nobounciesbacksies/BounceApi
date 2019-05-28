@@ -3,13 +3,13 @@ import { Firestore } from '@google-cloud/firestore';
 
 @Injectable()
 export class FirestoreService {
-    firestoreClient: Firestore;
+  firestoreClient: Firestore;
 
-    constructor() {
-        this.firestoreClient = new Firestore();
-    }
+  constructor() {
+    this.firestoreClient = new Firestore();
+  }
 
-    public getClient() {
-        return this.firestoreClient;
-    }
+  public getClient() {
+    return this.firestoreClient;
+  }
 }

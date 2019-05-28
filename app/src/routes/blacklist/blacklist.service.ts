@@ -22,7 +22,10 @@ export class BlacklistService {
     });
   }
 
-  async sendEmailsBack(emailsArray: Array<string>, blacklistID: string): Promise<any> {
+  async sendEmailsBack(
+    emailsArray: Array<string>,
+    blacklistID: string,
+  ): Promise<any> {
     const emailCollectionRef = await this.firestoreClient
       .collection('blacklist')
       .doc(blacklistID)
@@ -32,9 +35,11 @@ export class BlacklistService {
     const blacklist: Array<string> = [];
 
     emailsArray.forEach(email => {
-      if (allEmails.some(emailDoc => {
-        return email === emailDoc.email;
-      })) {
+      if (
+        allEmails.some(emailDoc => {
+          return email === emailDoc.email;
+        })
+      ) {
         blacklist.push(email);
       } else {
         whitelist.push(email);
@@ -43,11 +48,14 @@ export class BlacklistService {
 
     return {
       blacklist,
-      whitelist
+      whitelist,
     };
   }
 
-  async removeEmails(emailsArray: Array<string>, blacklistID: string): Promise<any> {
+  async removeEmails(
+    emailsArray: Array<string>,
+    blacklistID: string,
+  ): Promise<any> {
     const deletedEmails: Array<string> = [];
     const didNotExist: Array<string> = [];
     const emailCollectionRef = this.firestoreClient
@@ -66,11 +74,14 @@ export class BlacklistService {
     });
     return {
       deletedEmails,
-      didNotExist
+      didNotExist,
     };
   }
 
-  async addEmails(emailsArray: Array<string>, blacklistID: string): Promise<any> {
+  async addEmails(
+    emailsArray: Array<string>,
+    blacklistID: string,
+  ): Promise<any> {
     const emailCollectionRef = this.firestoreClient
       .collection('blacklist')
       .doc(blacklistID)
@@ -88,16 +99,15 @@ export class BlacklistService {
           addedFrom: EmailAddedFrom.userApi,
           createdAt: new Date(),
           createdBy: 'userID',
-          unsubscribed: false
-        }
+          unsubscribed: false,
+        };
         await emailCollectionRef.doc(email).set(newEmail);
         addedEmails.push(email);
       }
     });
     return {
       addedEmails,
-      existedEmails
+      existedEmails,
     };
   }
 }
-
