@@ -17,7 +17,7 @@ import { FirestoreService } from '../services/firestore.service';
       useFactory: async (config: ConfigService) => ({
         privateKey: config.get('auth.privateKey'),
         signOptions: {
-          algorithm: 'RS256',
+          algorithm: config.get('auth.algo'),
           audience: config.get('auth.audience'),
           issuer: config.get('auth.issuer'),
           keyid: config.get('auth.kid'),

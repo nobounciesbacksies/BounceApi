@@ -1,7 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
 import * as argon2 from 'argon2';
 import { accountDocument } from '../models/accountDocument';
 import { FirestoreService } from 'src/services/firestore.service';
@@ -25,16 +24,15 @@ export class AuthService {
     const accountInfo = await this.getAccountByUsername(username);
     if (accountInfo.password == hash) {
       return await this.createToken(accountInfo);
-    } else {
-      throw new HttpException(
-        'Incorrect username or password',
-        HttpStatus.BAD_REQUEST,
-      );
     }
+    throw new HttpException(
+      'Incorrect username or password',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   private async createToken(accountInfo: accountDocument): Promise<any> {
-    const accountPayload: JwtPayload = { sub: accountInfo.accountDocId };
+    const accountPayload = { sub: accountInfo.accountDocId };
     const accessToken = await this.jwtService.signAsync(accountPayload);
     return {
       expiresIn: 3600,
@@ -43,10 +41,24 @@ export class AuthService {
   }
 
   async validateUser(payload: string): Promise<any> {
+    if (this.config.get('app.isDevelopment')) {
+      const account: accountDocument = {
+        accountDocId: 'testdocid',
+        createdAt: new Date(),
+        createdBy: 'trevor',
+        deletedAt: null,
+        email: 'testing@testing.test',
+        password: 'aslkdfjaaweuhiauobd89723yr89t378fga9wevf8v2i3uyfgiouygwe8f',
+        updatedAt: null,
+        updatedBy: null,
+        username: 'testaccount'
+      }
+      return account
+    }
     const decoded: any = jwt.decode(payload, { complete: true });
 
     this.verifyDecoded(decoded);
-    const user = this.getAccountById(decoded.payload.sub);
+    const account = this.getAccountById(decoded.payload.sub);
 
     jwt.verify(
       payload,
@@ -62,11 +74,11 @@ export class AuthService {
           throw new UnauthorizedException(err.message);
         }
 
-        return user;
+        return account;
       },
     );
 
-    return user;
+    return account;
   }
 
   private async getAccountByUsername(
@@ -78,9 +90,8 @@ export class AuthService {
       .get();
     if (accountDoc.exists()) {
       return accountDoc;
-    } else {
-      throw new UnauthorizedException('Incorrect username or password.');
     }
+    throw new UnauthorizedException('Incorrect username or password.');
   }
 
   private async getAccountById(accountDocId): Promise<any> {
@@ -90,9 +101,8 @@ export class AuthService {
       .get();
     if (accountDoc.exists()) {
       return accountDoc;
-    } else {
-      throw new UnauthorizedException('Invalid token.');
     }
+    throw new UnauthorizedException('Invalid token.');
   }
 
   /**
@@ -106,9 +116,9 @@ export class AuthService {
       throw new UnauthorizedException('No "Kid" specified in headers.');
     }
 
-    const user = decoded.payload.sub || null;
+    const account = decoded.payload.sub || null;
 
-    if (!user) {
+    if (!account) {
       throw new UnauthorizedException(
         'No user specified in "Sub" payload field.',
       );
