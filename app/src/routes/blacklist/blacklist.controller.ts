@@ -9,23 +9,28 @@ import { Account } from '../../decorators/account.decorator';
 export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) {}
 
+  @Get('list')
+  async returnBlacklistArray(@Account() accountId: string): Promise<any> {
+    return this.blacklistService.returnBlacklistArray(accountId);
+  }
+
   @Get()
-  async returnBlacklist(@Account() account): Promise<string> {
-    return this.blacklistService.returnBlacklist('blacklistID');
+  async returnBlacklist(@Account() accountId: string, @Body('blacklistId') blacklistId: string): Promise<any> {
+    return this.blacklistService.returnBlacklist(accountId, blacklistId);
   }
 
   @Post()
-  async sendEmailsBack(@Body('emails') emails: Array<string>): Promise<string> {
-    return this.blacklistService.sendEmailsBack(emails, 'blacklistID');
+  async sendEmailsBack(@Account() accountId, @Body('blacklistId') blacklistId, @Body('emails') emails: Array<string>): Promise<any> {
+    return this.blacklistService.sendEmailsBack(accountId, blacklistId, emails);
   }
 
   @Delete()
-  async removeEmails(@Body('emails') emails: Array<string>): Promise<string> {
-    return this.blacklistService.removeEmails(emails, 'blacklistId');
+  async removeEmails(@Account() accountId, @Body('blacklistId') blacklistId, @Body('emails') emails: Array<string>): Promise<any> {
+    return this.blacklistService.removeEmails(accountId, blacklistId, emails);
   }
 
   @Post('/add')
-  async addEmails(@Body('emails') emails: Array<string>): Promise<string> {
-    return this.blacklistService.addEmails(emails, 'blacklistId');
+  async addEmails(@Account() accountId, @Body('blacklistId') blacklistId, @Body('emails') emails: Array<string>): Promise<any> {
+    return this.blacklistService.addEmails(accountId, blacklistId, emails);
   }
 }
