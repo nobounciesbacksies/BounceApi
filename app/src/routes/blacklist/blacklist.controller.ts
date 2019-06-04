@@ -18,8 +18,8 @@ export class BlacklistController {
     return this.blacklistService.returnBlacklist(accountId, blacklistId);
   }
 
-  @Post(':blacklistId')
-  async sendEmailsBack(@Param('blacklistId') blacklistId: string, @Account() accountId @Body('emails') emails: Array<string>): Promise<any> {
+  @Post(':blacklistId/validateEmail')
+  async sendEmailsBack(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
     return this.blacklistService.sendEmailsBack(accountId, blacklistId, emails);
   }
 
