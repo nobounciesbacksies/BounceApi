@@ -1,31 +1,35 @@
-import { Controller, Get, Post, Delete, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, UseGuards, Param } from '@nestjs/common';
 import { BlacklistService } from './blacklist.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Account } from '../../decorators/account.decorator';
 
-//placeholders for the blacklist routes
 @Controller('blacklist')
 @UseGuards(AuthGuard('bearer'))
 export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) {}
 
   @Get()
-  async returnBlacklist(@Account() account): Promise<string> {
-    return this.blacklistService.returnBlacklist('blacklistID');
+  async returnBlacklistArray(@Account() accountId: string): Promise<any> {
+    return this.blacklistService.returnBlacklistArray(accountId);
   }
 
-  @Post()
-  async sendEmailsBack(@Body('emails') emails: Array<string>): Promise<string> {
-    return this.blacklistService.sendEmailsBack(emails, 'blacklistID');
+  @Get(':blacklistId')
+  async returnBlacklist(@Param('blacklistId') blacklistId: string, @Account() accountId: string): Promise<any> {
+    return this.blacklistService.returnBlacklist(accountId, blacklistId);
   }
 
-  @Delete()
-  async removeEmails(@Body('emails') emails: Array<string>): Promise<string> {
-    return this.blacklistService.removeEmails(emails, 'blacklistId');
+  @Post(':blacklistId/validateEmail')
+  async sendEmailsBack(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
+    return this.blacklistService.sendEmailsBack(accountId, blacklistId, emails);
   }
 
-  @Post('/add')
-  async addEmails(@Body('emails') emails: Array<string>): Promise<string> {
-    return this.blacklistService.addEmails(emails, 'blacklistId');
+  @Delete(':blacklistId/remove')
+  async removeEmails(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
+    return this.blacklistService.removeEmails(accountId, blacklistId, emails);
+  }
+
+  @Post(':blacklistId/add')
+  async addEmails(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
+    return this.blacklistService.addEmails(accountId, blacklistId, emails);
   }
 }
