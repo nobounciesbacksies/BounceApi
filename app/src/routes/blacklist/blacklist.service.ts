@@ -24,7 +24,7 @@ export class BlacklistService {
   }
 
   async returnBlacklist(accountId: string, blacklistId: string): Promise<any> {
-    this.validateBlacklistExists(accountId, blacklistId);
+    await this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = await this.firestoreClient
       .collection('blacklist')
       .doc(blacklistId)
@@ -41,7 +41,7 @@ export class BlacklistService {
     blacklistId: string,
     emailsArray: Array<string>,
   ): Promise<any> {
-    this.validateBlacklistExists(accountId, blacklistId);
+    await this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = await this.firestoreClient
       .collection('blacklist')
       .doc(blacklistId)
@@ -73,7 +73,7 @@ export class BlacklistService {
     blacklistId: string,
     emailsArray: Array<string>,
   ): Promise<any> {
-    this.validateBlacklistExists(accountId, blacklistId);
+    await this.validateBlacklistExists(accountId, blacklistId);
     const deletedEmails: Array<string> = [];
     const didNotExist: Array<string> = [];
     const emailCollectionRef = this.firestoreClient
@@ -101,7 +101,7 @@ export class BlacklistService {
     blacklistId: string,
     emailsArray: Array<string>,
   ): Promise<any> {
-    this.validateBlacklistExists(accountId, blacklistId);
+    await this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = this.firestoreClient
       .collection('blacklist')
       .doc(blacklistId)
