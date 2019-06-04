@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { FirestoreService } from '../../services/firestore.service';
 import { EmailDocument, EmailAddedFrom } from '../../models/EmailDocument';
 import { accountDocument } from 'src/models/accountDocument';
@@ -15,12 +15,16 @@ export class BlacklistService {
     const accountDoc: accountDocument = await this.firestoreClient.collection('account').doc(accountId).get();
     return accountDoc.blacklists;
   }
-
-  async returnBlacklist(accountId: string, blacklistId: string): Promise<any> {
+  
+  async validateBlacklistExists(accountId: string, blacklistId: string): Promise<any> {
     const accountDoc: accountDocument = await this.firestoreClient.collection('account').doc(accountId).get();
     if (accountDoc.blacklists.includes(blacklistId)) {
-      return new UnauthorizedException('Invalid blacklistId');
+      return new NotFoundException('Invalid blacklistId');
     }
+  }
+
+  async returnBlacklist(accountId: string, blacklistId: string): Promise<any> {
+    this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = await this.firestoreClient
       .collection('blacklist')
       .doc(blacklistId)
@@ -37,10 +41,7 @@ export class BlacklistService {
     blacklistId: string,
     emailsArray: Array<string>,
   ): Promise<any> {
-    const accountDoc: accountDocument = this.firestoreClient.collection('account').doc(accountId).get()
-    if (!accountDoc.blacklists.includes(blacklistId)) {
-      return new UnauthorizedException('Invalid blacklistId');
-    }
+    this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = await this.firestoreClient
       .collection('blacklist')
       .doc(blacklistId)
@@ -72,10 +73,7 @@ export class BlacklistService {
     blacklistId: string,
     emailsArray: Array<string>,
   ): Promise<any> {
-    const accountDoc: accountDocument = this.firestoreClient.collection('account').doc(accountId).get()
-    if (!accountDoc.blacklists.includes(blacklistId)) {
-      return new UnauthorizedException('Invalid blacklistId');
-    }
+    this.validateBlacklistExists(accountId, blacklistId);
     const deletedEmails: Array<string> = [];
     const didNotExist: Array<string> = [];
     const emailCollectionRef = this.firestoreClient
@@ -103,10 +101,7 @@ export class BlacklistService {
     blacklistId: string,
     emailsArray: Array<string>,
   ): Promise<any> {
-    const accountDoc: accountDocument = this.firestoreClient.collection('account').doc(accountId).get()
-    if (!accountDoc.blacklists.includes(blacklistId)) {
-      return new UnauthorizedException('Invalid blacklistId');
-    }
+    this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = this.firestoreClient
       .collection('blacklist')
       .doc(blacklistId)
