@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FirestoreService } from '../../services/firestore.service';
 import { EmailDocument, EmailAddedFrom } from '../../models/EmailDocument';
 import { accountDocument } from 'src/models/accountDocument';
+import { ConfigService } from 'nestjs-config';
+import * as jwt from 'jsonwebtoken';
+import { whitelistEmail } from 'src/models/whitelistReturn';
 
 @Injectable()
 export class BlacklistService {
   firestoreClient;
+  private readonly config: ConfigService;
 
   constructor(firestoreService: FirestoreService) {
     this.firestoreClient = firestoreService.getClient();
@@ -21,6 +25,11 @@ export class BlacklistService {
     if (accountDoc.blacklists.includes(blacklistId)) {
       return new NotFoundException('Invalid blacklistId');
     }
+  }
+
+  async createUnsubscriptionLink(email: string, privateKey: string, signOptions): Promise<string> {
+    const unsubToken: string = jwt.sign(email, privateKey, signOptions);
+    return unsubToken.concat(privateKey);
   }
 
   async returnBlacklist(accountId: string, blacklistId: string): Promise<any> {
@@ -47,8 +56,14 @@ export class BlacklistService {
       .doc(blacklistId)
       .collection('emails');
     const allEmails: Array<EmailDocument> = await emailCollectionRef.get();
-    const whitelist: Array<string> = [];
+    const whitelist: Array<whitelistEmail> = [];
     const blacklist: Array<string> = [];
+    const unsubPrivateKey: string = this.config.get('subscription.privateKey');
+    const signOptions = {
+      issuer: this.config.get('auth.issuer'),
+      audience: this.config.get('auth.audience'),
+      algorithm: this.config.get('auth.algo'),
+    };
 
     emailsArray.forEach(email => {
       if (
@@ -58,7 +73,12 @@ export class BlacklistService {
       ) {
         blacklist.push(email);
       } else {
-        whitelist.push(email);
+        const unsubUrl = await this.createUnsubscriptionLink(email, unsubPrivateKey, signOptions);
+
+        whitelist.push({
+          email: email,
+          unsubscribe: unsubUrl,
+          );
       }
     });
 

@@ -1,5 +1,3 @@
-import { declareExportDeclaration } from '@babel/types';
-
 export interface accountDocument {
   accountDocId: string;
   email: string;
