@@ -17,21 +17,21 @@ export class BlacklistService {
 
   async returnBlacklistArray(accountId: string): Promise<any> {
     const accountDoc: DocumentSnapshot = await this.firestoreClient.collection('account').doc(accountId).get();
-    // may have some information in the blacklists array in account documents, mayb need some formatting or something when it's returned.
+    // blacklists object needs interface I think
     return accountDoc.get('blacklists');
   }
   
   async validateBlacklistExists(accountId: string, blacklistId: string): Promise<any> {
     const accountDoc: DocumentSnapshot = await this.firestoreClient.collection('account').doc(accountId).get();
-    // may want to have more information on the blacklist array in the account documents, if we do, this needs to be changed a bit
-    if (!accountDoc.get('blacklists').includes(blacklistId)) {
+    if (!(blacklistId in accountDoc.get('blacklists'))) {
       return new NotFoundException('Invalid blacklistId');
     }
   }
 
-  async createUnsubscriptionLink(email: string, privateKey: string, signOptions): Promise<string> {
-    const unsubToken: string = jwt.sign(email, privateKey, signOptions);
-    return unsubToken.concat(privateKey);
+  async createUnsubscriptionLink(email: string): Promise<string> {
+    const apiUrl = 'www.healthemail.io/api/v1/unsub/';
+    const unsubToken: string = jwt.sign(email, this.config.get('subscription.privateKey'), this.config.get('subscription.signOptions'));
+    return apiUrl.concat(unsubToken);
   }
 
   async returnBlacklist(accountId: string, blacklistId: string): Promise<any> {
@@ -61,14 +61,8 @@ export class BlacklistService {
     const allEmails: QuerySnapshot = await emailCollectionRef.get();
     const whitelist: Array<whitelistEmail> = [];
     const blacklist: Array<string> = [];
-    const unsubPrivateKey: string = this.config.get('subscription.privateKey');
-    const signOptions = {
-      issuer: this.config.get('auth.issuer'),
-      audience: this.config.get('auth.audience'),
-      algorithm: this.config.get('auth.algo'),
-    };
 
-    emailsArray.forEach(email => {
+    emailsArray.forEach(async email => {
       if (
         allEmails.docs.some(emailDoc => {
           return email === emailDoc.id;
@@ -76,12 +70,12 @@ export class BlacklistService {
       ) {
         blacklist.push(email);
       } else {
-        const unsubUrl = await this.createUnsubscriptionLink(email, unsubPrivateKey, signOptions);
+        const unsubUrl = await this.createUnsubscriptionLink(email);
 
         whitelist.push({
           email: email,
           unsubscribe: unsubUrl,
-          );
+        });
       }
     });
 

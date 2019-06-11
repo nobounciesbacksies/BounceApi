@@ -13,4 +13,9 @@ export default {
     fs.readFileSync(join(__dirname, '..', '..', 'keys', 'unsubscribe.key'), 'utf8') ||
       12345,
   ),
+  signOptions: {
+    issuer: 'healthemail.io',
+    audience: 'blacklist-api',
+    algorithm: 'RS256',
+  }
 };
