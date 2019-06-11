@@ -1,5 +1,3 @@
-import { DocumentData } from "@google-cloud/firestore";
-
 export enum EmailAddedFrom {
   awsWebhook,
   gcpWebhook,
