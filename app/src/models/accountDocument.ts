@@ -1,5 +1,4 @@
 export interface accountDocument {
-  accountDocId: string;
   email: string;
   username: string;
   password: string;

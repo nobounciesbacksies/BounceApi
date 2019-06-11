@@ -1,3 +1,5 @@
+import { DocumentData } from "@google-cloud/firestore";
+
 export enum EmailAddedFrom {
   awsWebhook,
   gcpWebhook,
@@ -7,7 +9,6 @@ export enum EmailAddedFrom {
 }
 
 export interface EmailDocument {
-  email: string;
   createdAt: Date;
   createdBy: string;
   addedFrom: EmailAddedFrom;
