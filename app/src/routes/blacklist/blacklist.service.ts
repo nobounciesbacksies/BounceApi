@@ -43,8 +43,10 @@ export class BlacklistService {
     const emailsQuery: QuerySnapshot = await emailCollectionRef.get();
 
     return emailsQuery.docs.map(emailDoc => {
-      //return anymore info per email or just the emails themselves?
-      return emailDoc.id;
+      return {
+        email: emailDoc.id,
+        addedFrom: emailDoc.get('addedFrom'),
+      }
     });
   }
 
