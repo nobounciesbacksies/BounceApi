@@ -2,14 +2,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import * as argon2 from 'argon2';
-import { accountDocument } from '../models/accountDocument';
 import { FirestoreService } from 'src/services/firestore.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from 'nestjs-config';
+import { QuerySnapshot, DocumentSnapshot } from '@google-cloud/firestore';
 
 @Injectable()
 export class AuthService {
-  firestoreClient;
+  firestoreClient: FirebaseFirestore.Firestore;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -20,19 +19,13 @@ export class AuthService {
   }
 
   async login(username: string, password: string): Promise<any> {
-    const hash = await argon2.hash(password);
-    const accountInfo = await this.getAccountByUsername(username);
-    if (accountInfo.password == hash) {
-      return await this.createToken(accountInfo);
-    }
-    throw new HttpException(
-      'Incorrect username or password',
-      HttpStatus.BAD_REQUEST,
-    );
+    const passwordHash = await argon2.hash(password);
+    const accountInfo = await this.getAccountByUsername(username, passwordHash);
+    return await this.createToken(accountInfo);
   }
 
-  private async createToken(accountInfo: accountDocument): Promise<any> {
-    const accountPayload = { sub: accountInfo.accountDocId };
+  private async createToken(accountInfo: DocumentSnapshot): Promise<any> {
+    const accountPayload = { sub: accountInfo.id };
     const accessToken = await this.jwtService.signAsync(accountPayload);
     return {
       expiresIn: 3600,
@@ -40,21 +33,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(payload: string): Promise<any> {
-    if (this.config.get('app.isDevelopment')) {
-      const account: accountDocument = {
-        accountDocId: 'testdocid',
-        createdAt: new Date(),
-        createdBy: 'trevor',
-        deletedAt: null,
-        email: 'testing@testing.test',
-        password: 'aslkdfjaaweuhiauobd89723yr89t378fga9wevf8v2i3uyfgiouygwe8f',
-        updatedAt: null,
-        updatedBy: null,
-        username: 'testaccount'
-      }
-      return account
-    }
+  async validateUser(payload: string): Promise<DocumentSnapshot> {
     const decoded: any = jwt.decode(payload, { complete: true });
 
     this.verifyDecoded(decoded);
@@ -83,32 +62,30 @@ export class AuthService {
 
   private async getAccountByUsername(
     username: string,
-  ): Promise<accountDocument> {
-    const accountDoc = this.firestoreClient
+    passwordHash: string,
+  ): Promise<DocumentSnapshot> {
+    const accountQuery: QuerySnapshot = await this.firestoreClient
       .collection('accounts')
       .where('username', '==', username)
+      .where('password', '==', passwordHash)
       .get();
-    if (accountDoc.exists()) {
-      return accountDoc;
+    if (accountQuery.empty) {
+      throw new UnauthorizedException('Incorrect username or password.');
     }
-    throw new UnauthorizedException('Incorrect username or password.');
+    return accountQuery.docs[0]
   }
 
-  private async getAccountById(accountDocId): Promise<any> {
-    const accountDoc = this.firestoreClient
+  private async getAccountById(accountDocId: string): Promise<DocumentSnapshot> {
+    const accountDoc: DocumentSnapshot = await this.firestoreClient
       .collection('accounts')
       .doc(accountDocId)
       .get();
-    if (accountDoc.exists()) {
+    if (accountDoc.exists) {
       return accountDoc;
     }
     throw new UnauthorizedException('Invalid token.');
   }
 
-  /**
-   * This checks the values of the token to make sure it is valid.
-   * @param decoded the decoded object jws of the token.
-   */
   private async verifyDecoded(decoded: any): Promise<void> {
     const kid = decoded.header.kid || null;
 
