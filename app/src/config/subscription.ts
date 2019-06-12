@@ -17,5 +17,6 @@ export default {
     issuer: 'healthemail.io',
     audience: 'blacklist-api',
     algorithm: 'RS256',
-  }
+  },
+  apiUrl: 'www.healthemail.io/api/v1/unsub/',
 };

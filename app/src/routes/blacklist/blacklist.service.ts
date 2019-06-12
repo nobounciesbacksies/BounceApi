@@ -17,21 +17,19 @@ export class BlacklistService {
 
   async returnBlacklistArray(accountId: string): Promise<any> {
     const accountDoc: DocumentSnapshot = await this.firestoreClient.collection('account').doc(accountId).get();
-    // blacklists object needs interface I think
     return accountDoc.get('blacklists');
   }
-  
+
   async validateBlacklistExists(accountId: string, blacklistId: string): Promise<any> {
     const accountDoc: DocumentSnapshot = await this.firestoreClient.collection('account').doc(accountId).get();
-    if (!(blacklistId in accountDoc.get('blacklists'))) {
+    if (!(accountDoc.get('blacklists').some((blacklist: DocumentSnapshot) => blacklist.id === blacklistId))) {
       return new NotFoundException('Invalid blacklistId');
     }
   }
 
   async createUnsubscriptionLink(email: string): Promise<string> {
-    const apiUrl = 'www.healthemail.io/api/v1/unsub/';
     const unsubToken: string = jwt.sign(email, this.config.get('subscription.privateKey'), this.config.get('subscription.signOptions'));
-    return apiUrl.concat(unsubToken);
+    return this.config.get('subscription.apiUrl').concat(unsubToken);
   }
 
   async returnBlacklist(accountId: string, blacklistId: string): Promise<any> {
@@ -149,3 +147,5 @@ export class BlacklistService {
     };
   }
 }
+
+Array.some(blacklist => blacklist.id === blacklistidcompare)
