@@ -80,8 +80,8 @@ export class BlacklistService {
     });
 
     return {
-      blacklist,
-      whitelist,
+      "Blacklist": blacklist,
+      "Whitelist": whitelist,
     };
   }
 
@@ -108,8 +108,8 @@ export class BlacklistService {
       }
     });
     return {
-      deletedEmails,
-      didNotExist,
+      "Deleted Emails": deletedEmails,
+      "Not in Blacklist": didNotExist,
     };
   }
 
@@ -142,10 +142,8 @@ export class BlacklistService {
       }
     });
     return {
-      addedEmails,
-      existedEmails,
+      "Added Emails": addedEmails,
+      "Already in Blacklist": existedEmails,
     };
   }
 }
-
-Array.some(blacklist => blacklist.id === blacklistidcompare)
