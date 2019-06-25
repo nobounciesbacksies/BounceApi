@@ -80,8 +80,8 @@ export class BlacklistService {
     });
 
     return {
-      "Blacklist": blacklist,
-      "Whitelist": whitelist,
+      "blacklist": blacklist,
+      "whitelist": whitelist,
     };
   }
 
@@ -108,8 +108,8 @@ export class BlacklistService {
       }
     });
     return {
-      "Deleted Emails": deletedEmails,
-      "Not in Blacklist": didNotExist,
+      "deletedEmails": deletedEmails,
+      "notInBlacklist": didNotExist,
     };
   }
 
@@ -142,8 +142,8 @@ export class BlacklistService {
       }
     });
     return {
-      "Added Emails": addedEmails,
-      "Already in Blacklist": existedEmails,
+      "addedEmails": addedEmails,
+      "alreadyInBlacklist": existedEmails,
     };
   }
 }
