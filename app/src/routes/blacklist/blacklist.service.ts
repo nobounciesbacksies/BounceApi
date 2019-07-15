@@ -4,7 +4,7 @@ import { EmailDocument, EmailAddedFrom } from '../../models/EmailDocument';
 import { ConfigService } from 'nestjs-config';
 import * as jwt from 'jsonwebtoken';
 import { whitelistEmail } from 'src/models/whitelistReturn';
-import { DocumentSnapshot, QuerySnapshot, DocumentData } from '@google-cloud/firestore';
+import { DocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore';
 
 @Injectable()
 export class BlacklistService {
@@ -20,14 +20,14 @@ export class BlacklistService {
     return accountDoc.get('blacklists');
   }
 
-  async validateBlacklistExists(accountId: string, blacklistId: string): Promise<any> {
+  private async validateBlacklistExists(accountId: string, blacklistId: string): Promise<any> {
     const accountDoc: DocumentSnapshot = await this.firestoreClient.collection('account').doc(accountId).get();
     if (!(accountDoc.get('blacklists').some((blacklist: DocumentSnapshot) => blacklist.id === blacklistId))) {
       return new NotFoundException('Invalid blacklistId');
     }
   }
 
-  async createUnsubscriptionLink(email: string): Promise<string> {
+  private async createUnsubscriptionLink(email: string): Promise<string> {
     const unsubToken: string = jwt.sign(email, this.config.get('subscription.privateKey'), this.config.get('subscription.signOptions'));
     return this.config.get('subscription.apiUrl').concat(unsubToken);
   }
@@ -51,7 +51,7 @@ export class BlacklistService {
   async sendEmailsBack(
     accountId: string,
     blacklistId: string,
-    emailsArray: Array<string>,
+    emailsArray: [string],
   ): Promise<any> {
     await this.validateBlacklistExists(accountId, blacklistId);
     const emailCollectionRef = await this.firestoreClient
@@ -73,15 +73,15 @@ export class BlacklistService {
         const unsubUrl = await this.createUnsubscriptionLink(email);
 
         whitelist.push({
-          email: email,
+          email,
           unsubscribe: unsubUrl,
         });
       }
     });
 
     return {
-      "blacklist": blacklist,
-      "whitelist": whitelist,
+      'blacklist': blacklist,
+      'whitelist': whitelist,
     };
   }
 
@@ -108,8 +108,8 @@ export class BlacklistService {
       }
     });
     return {
-      "deletedEmails": deletedEmails,
-      "notInBlacklist": didNotExist,
+      'deletedEmails': deletedEmails,
+      'notInBlacklist': didNotExist,
     };
   }
 
@@ -142,8 +142,8 @@ export class BlacklistService {
       }
     });
     return {
-      "addedEmails": addedEmails,
-      "alreadyInBlacklist": existedEmails,
+      'addedEmails': addedEmails,
+      'alreadyInBlacklist': existedEmails,
     };
   }
 }

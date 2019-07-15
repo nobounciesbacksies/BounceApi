@@ -22,19 +22,19 @@ export class BlacklistController {
 
   @HttpCode(200)
   @Post(':blacklistId/validateEmail')
-  async sendEmailsBack(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
+  async sendEmailsBack(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: [string]): Promise<any> {
     return this.blacklistService.sendEmailsBack(accountId, blacklistId, emails);
   }
 
   @HttpCode(200)
   @Delete(':blacklistId/remove')
-  async removeEmails(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
+  async removeEmails(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: [string]): Promise<any> {
     return this.blacklistService.removeEmails(accountId, blacklistId, emails);
   }
 
   @HttpCode(200)
   @Post(':blacklistId/add')
-  async addEmails(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: Array<string>): Promise<any> {
+  async addEmails(@Param('blacklistId') blacklistId: string, @Account() accountId, @Body('emails') emails: [string]): Promise<any> {
     return this.blacklistService.addEmails(accountId, blacklistId, emails);
   }
 }

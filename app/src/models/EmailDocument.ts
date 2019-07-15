@@ -10,5 +10,6 @@ export interface EmailDocument {
   createdAt: Date;
   createdBy: string;
   addedFrom: EmailAddedFrom;
-  unsubscribed: Boolean;
+  unsubscribed: boolean;
+  complaintFeedbackType?: string;
 }
