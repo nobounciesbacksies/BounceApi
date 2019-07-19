@@ -1,13 +1,15 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { WebhooksService } from './webhooks.service';
 
-//placeholder for aws webhooks
+
+
 @Controller()
 export class WebhooksController {
   constructor(private readonly webhooksService: WebhooksService) {}
 
   @Post('/aws/:webhookId')
-  async recieveHook(webhookId: string): Promise<string> {
-    return this.webhooksService.recieveHook(webhookId);
+  async recieveHook(@Body() jsonInfo: any, webhookId: string): Promise<any> {
+    this.webhooksService.recieveHook(jsonInfo, webhookId);
+    return;
   }
 }
