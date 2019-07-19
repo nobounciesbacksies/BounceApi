@@ -15,7 +15,8 @@ export class WebhooksService {
     const blacklistId = querysnapshot.docs[1].id;
     if (jsonInfo.eventType === 'Complaint') {
       await this.handleComplaint(jsonInfo, blacklistId);
-    } else if (jsonInfo.eventType === 'Bounce') {
+    }
+    if (jsonInfo.eventType === 'Bounce') {
       await this.handleBounce(jsonInfo, blacklistId);
     }
     return;
@@ -51,9 +52,9 @@ export class WebhooksService {
         complaintFeedbackType: feedbackType,
       };
       await emailCollectionRef.doc(email).set(newEmail);
-    } else {
-      await emailCollectionRef.doc(email).update({createdBy: 'complaint', complaintFeedbackType: feedbackType});
+      return;
     }
+    await emailCollectionRef.doc(email).update({createdBy: 'complaint', complaintFeedbackType: feedbackType});
     return;
   }
 }
