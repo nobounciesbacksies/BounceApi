@@ -30,7 +30,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^2.4.0",
     "@nest-middlewares/compression": "^6.0.0",
-    "@nest-middlewares/cors": "^6.0.0",
+    "@nest-middlewares/cors": "^6.0.1",
     "@nest-middlewares/helmet": "^6.0.0",
     "@nest-middlewares/response-time": "^6.0.0",
     "@nestjs/common": "^6.8.3",
