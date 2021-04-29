@@ -1,0 +1,34 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/app"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: y18n
+    versions:
+    - 4.0.1
+    - 4.0.2
+  - dependency-name: "@nestjs/swagger"
+    versions:
+    - 4.7.12
+    - 4.7.13
+    - 4.7.15
+    - 4.7.16
+  - dependency-name: rxjs
+    versions:
+    - 6.6.3
+    - 6.6.6
+  - dependency-name: argon2
+    versions:
+    - 0.27.1
+  - dependency-name: node-gyp
+    versions:
+    - 7.1.2
+  - dependency-name: "@types/supertest"
+    versions:
+    - 2.0.10
+  - dependency-name: handlebars
+    versions:
+    - 4.7.6
